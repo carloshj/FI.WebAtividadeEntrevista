@@ -1,0 +1,207 @@
+﻿
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function ($) {
+        $(".cpf-mask").mask("999.999.999-99");
+    });
+
+    function InsertNewRow() {
+        var table = document.getElementById("tbBenef");
+        var cpf = document.getElementById("CPFBenef");
+        var nome = document.getElementById("NomeBenef");
+        var row = table.insertRow(1);
+
+        if (!TestaCPF(cpf.value)) {
+            ModalDialog("Validação", "CPF inválido");
+            cpf.value = "";
+            return;
+        }
+
+        var isNew = true;
+        for (var i = 0; i < table.rows.length; i++) {
+            if (table.rows[i].cells.length > 0) {
+                var cpf2 = table.rows[i].cells[0].innerHTML
+                if (cpf2 === cpf.value) {
+                    table.rows[i].cells[1].innerHTML = nome.value;
+                    isNew = false
+                }
+            }
+        }
+
+        if (isNew) {
+            row.innerHTML =
+                '<td>' + cpf.value + '</td>' +
+                '<td>' + nome.value + '</td>' +
+                '<td><button type="button" class="btn btn-sm btn-info" onclick="ChangeRow (this);">Alterar</button></td>' +
+                '<td><button type="button" class="btn btn-sm btn-info" onclick="DeleteRow (this);">Excluir</button></td>' +
+                '<td hidden>0</td>';
+        }
+
+        cpf.value = "";
+        nome.value = "";
+    }
+
+    function DeleteRow(elemen) {
+        $(((elemen).parentNode).parentNode).addClass('hidden');
+    }
+
+    function ChangeRow(elemen) {
+        var cpf = document.getElementById("CPFBenef");
+        var nome = document.getElementById("NomeBenef");
+
+        var x = $(((elemen).parentNode).parentNode)[0];
+        cpf.value = x.cells[0].innerHTML;
+        nome.value = x.cells[1].innerHTML;
+    }
+
+
+</script>
+
+<form id="formCadastro" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Nome">Nome:</label>
+                <input required="required" type="text" class="form-control" id="Nome" name="Nome" placeholder="Ex.: João" maxlength="50">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Sobrenome">Sobrenome:</label>
+                <input required="required" type="text" class="form-control" id="Sobrenome" name="Sobrenome" placeholder="Ex.: da Silva" maxlength="255">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="CPF">CPF:</label>
+                <input required="required" type="text" class="form-control cpf-mask" id="CPF" name="CPF" placeholder="Ex.: 010.011.111-00" maxlength="14">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Nacionalidade">Nacionalidade:</label>
+                <input required="required" type="text" class="form-control" id="Nacionalidade" name="Nacionalidade" placeholder="Ex.: brasileira" maxlength="50">
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="CEP">CEP:</label>
+                <input required="required" type="text" class="form-control" id="CEP" name="CEP" placeholder="Ex.: 01011-100" maxlength="9">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="Estado">Estado:</label>
+                <select required="required" id="Estado" class="form-control" name="Estado">
+                    <option value="">Selecione</option>
+                    <option value="SP">São Paulo</option>
+                    <option value="PE">Pernambuco</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="Cidade">Cidade:</label>
+                <input required="required" type="text" class="form-control" id="Cidade" name="Cidade" maxlength="50" placeholder="Ex.: São Paulo">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="Logradouro">Logradouro:</label>
+                <input required="required" type="text" class="form-control" id="Logradouro" name="Logradouro" placeholder="Ex.: Rua Boa Vista 253" maxlength="500">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Email">E-mail:</label>
+                <input required="required" type="text" class="form-control" id="Email" name="Email" placeholder="Ex.: email@email.com" maxlength="2079">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Telefone">Telefone:</label>
+                <input required="required" type="tel" class="form-control" id="Telefone" name="Telefone" placeholder="Ex.: (11) 2020-3030" maxlength="15">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#mdBenef">Beneficiários</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="pull-right">
+                <button type="submit" class="btn btn-sm btn-success">Salvar</button>
+                @Html.ActionLink("Voltar", "Index", "Cliente", new { }, new { @class = "btn btn-sm btn-danger" })
+            </div>
+        </div>
+    </div>
+
+    <div id="mdBenef" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Beneficiários</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="CPF">CPF:</label>
+                                <input type="text" class="form-control cpf-mask" id="CPFBenef" name="CPFBenef" placeholder="Ex.: 010.011.111-00" maxlength="14">
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="Nome">Nome:</label>
+                                <input type="text" class="form-control" id="NomeBenef" name="NomeBenef" placeholder="Ex.: João" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <br />
+                                <button type="button" onclick="InsertNewRow ();" class="btn btn-success">Incluir</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table id="tbBenef" class="table">
+                            <thead>
+                                <tr>
+                                    <th>CPF</th>
+                                    <th>Nome</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
